@@ -31,4 +31,5 @@ Route::middleware('auth')->group(function () {
 
 Route::get('/product/create', [ProductController::class,'create_product'])->name('create_product');
 Route::post('/product/create', [ProductController::class,'store_product'])->name('store_product');
+Route::get('/product', [ProductController::class,'show_product'])->name('show_product');
 require __DIR__.'/auth.php';

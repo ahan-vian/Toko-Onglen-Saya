@@ -33,4 +33,9 @@ class ProductController extends Controller
         ]);
         return redirect()->route('create_product')->with('success','berhasil menambahkan product');
     }
+
+    public function show_product(){
+        $product = Product::all();
+        return view('show_product', compact('product'));
+    }
 }
