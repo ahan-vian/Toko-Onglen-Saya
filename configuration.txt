@@ -1,0 +1,16 @@
+User can register with their name, email and pass
+user can login using email and password
+user can view all product
+user can view detail of a specific product
+user can add product to the cart
+user can increase or decrease product quantity from the cart
+user can checkout the cart
+user can view past orders
+user can submit payment for their order
+user can change their name and password
+
+Admin is created using seeder
+admin can add new products
+admin can edit products
+admin can delete products
+admin can confirm order payment
