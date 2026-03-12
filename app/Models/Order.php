@@ -8,4 +8,15 @@ use Illuminate\Database\Eloquent\Model;
 class Order extends Model
 {
     use HasFactory;
+    protected $fillable =[
+        "is_paid",
+        "payment_recept"
+    ];
+    public function users(){
+        return $this->belongsTo(User::class);
+    }
+
+    public function products(){
+        return $this->belongsToMany(Product::class);
+    }
 }
