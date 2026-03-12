@@ -14,11 +14,11 @@ class Cart extends Model
         "amount"
     ];
 
-    public function user(){
+    public function users(){
         return $this->belongsTo(User::class);
     }
 
-    public function product(){
+    public function products(){
         return $this->belongsTo(Product::class);
     }
 }

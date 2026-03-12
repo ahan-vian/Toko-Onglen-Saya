@@ -44,11 +44,11 @@ class User extends Authenticatable
         'password' => 'hashed',
     ];
 
-    public function cart(){
+    public function carts(){
         return $this->hasMany(Cart::class);
     }
 
-    public function order(){
+    public function orders(){
         return $this->hasMany(Order::class);
     }
 }
