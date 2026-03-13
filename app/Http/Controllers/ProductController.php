@@ -38,4 +38,8 @@ class ProductController extends Controller
         $product = Product::all();
         return view('show_product', compact('product'));
     }
+
+    public function detail_product(product $product){
+        return view('detail_product', compact('product'));
+    }
 }
