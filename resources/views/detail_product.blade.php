@@ -19,7 +19,8 @@
                         <h1 class="text-3xl font-bold mb-4 text-gray-900">{{ $product->name }}</h1>
 
                         <p class="text-3xl text-blue-600 font-bold mb-6">Rp
-                            {{ number_format($product->price, 0, ',', '.') }}</p>
+                            {{ number_format($product->price, 0, ',', '.') }}
+                        </p>
 
                         <div class="mb-6">
                             <span
@@ -40,6 +41,16 @@
                                 class="inline-block bg-yellow-500 hover:bg-yellow-600 text-white font-bold py-2 px-6 rounded transition-colors ml-4">
                                 &#9998; Edit Produk
                             </a>
+                            <form action="{{ route('destroy_product', $product->id) }}" method="POST"
+                                class="inline-block"
+                                onsubmit="return confirm('Apakah Anda yakin ingin menghapus produk ini? Tindakan ini tidak dapat dibatalkan.');">
+
+                                @csrf
+                                @method('DELETE') <button type="submit"
+                                    class="bg-red-600 hover:bg-red-700 text-white font-bold py-2 px-6 rounded transition-colors ml-2 shadow-sm">
+                                    Hapus Produk
+                                </button>
+                            </form>
                         </div>
                     </div>
 
