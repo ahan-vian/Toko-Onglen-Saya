@@ -57,9 +57,17 @@
                                         </td>
                                         
                                         <td class="border-b py-4 px-4 text-center">
-                                            <span class="bg-gray-200 px-3 py-1 rounded-full font-bold text-gray-700">
-                                                {{ $cart->amount }}
-                                            </span>
+                                            <form action="{{ route('update_cart', $cart->id) }}" method="POST" class="flex items-center justify-center gap-2">
+                                                @csrf
+                                                @method('PATCH')
+                                                
+                                                <input type="number" name="amount" value="{{ $cart->amount }}" min="1" max="{{ $cart->product->stock }}" 
+                                                    class="w-16 text-center border-gray-300 rounded-md shadow-sm focus:ring-blue-500 focus:border-blue-500 text-sm py-1">
+                                                
+                                                <button type="submit" class="bg-blue-500 hover:bg-blue-600 text-white text-xs font-bold py-1.5 px-3 rounded shadow-sm transition-colors">
+                                                    Update
+                                                </button>
+                                            </form>
                                         </td>
                                         
                                         <td class="border-b py-4 px-4 text-right font-bold text-blue-600">
@@ -73,6 +81,7 @@
                                                 @method('DELETE')
                                                 <button type="submit" class="text-red-500 hover:text-red-700 font-bold text-sm">Hapus</button>
                                             </form>
+                                            
                                         </td>
                                     </tr>
 

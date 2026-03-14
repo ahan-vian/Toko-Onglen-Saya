@@ -30,16 +30,12 @@ class CartController extends Controller
         return view('show_cart', compact('carts'));
     }
 
-    public function update_cart(Request $request, Product $product){
+    public function update_cart(Request $request, Product $product, Cart $cart){
         $request->validate([
-            "amount"=> "required|numeric|min:1|max:" . $product->stock,
+            "amount"=> "required|integer|min:1|max:" . $cart->product->stock,
         ]);
-        $user_id = auth()->user()->id;
-        $product_id = $product->id;
-        Cart::update([
+        $cart->update([
             "amount"=> $request->amount,
-            "product_id"=> $product_id,
-            "user_id"=> $user_id
         ]);
         return redirect()->route("show_cart")->with("success","");
     }
