@@ -2,6 +2,7 @@
 
 use App\Http\Controllers\ProductController;
 use App\Http\Controllers\ProfileController;
+use App\Http\Controllers\CartController;
 use Illuminate\Support\Facades\Route;
 
 /*
@@ -34,6 +35,7 @@ Route::middleware('auth')->group(function () {
     Route::get('/product/edit/{product}', [ProductController::class,'edit_product'])->name('edit_product');
     Route::put('/product/update/{product}', [ProductController::class,'update_product'])->name('update_product');
     Route::delete('/product/{product}',[ProductController::class,'destroy_product'])->name('destroy_product');
+    Route::post('/cart/add/{product}', [CartController::class,'add_to_cart'])->name('add_to_cart');
 });
 
 require __DIR__.'/auth.php';
