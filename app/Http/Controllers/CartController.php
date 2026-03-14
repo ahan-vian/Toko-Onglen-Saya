@@ -15,11 +15,26 @@ class CartController extends Controller
         $user_id = auth()->user()->id;
         $product_id = $product->id;
 
-        Cart::create([
-            "amount"=> $request->amount,
-            "product_id"=> $product_id,
-            "user_id"=> $user_id
-        ]);
+        $existing_cart = Cart::where("user_id", $user_id)
+        ->where("product_id", $product_id)
+        ->first();
+
+        if($existing_cart){
+            $new_amount = $existing_cart->amount + $request->amount;
+            if($new_amount > $product->stock){
+                return redirect()->back()->with("error","Gagal! Total barang di keranjang Anda melebihi sisa stok yang ada (' . $product->stock . ' item).");
+            }
+            $existing_cart->update([
+                'amount'=> $new_amount
+            ]);
+        }
+        else{
+            Cart::create([
+                "amount"=> $request->amount,
+                "product_id"=> $product_id,
+                "user_id"=> $user_id
+            ]);
+        }
         return redirect()->route("show_product")->with("success","");
     }
 
