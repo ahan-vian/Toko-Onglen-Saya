@@ -73,4 +73,17 @@ class OrderController extends Controller
         $order->load('transactions.product');
         return view('show_order', compact('order'));
     }
+
+    public function index_order()
+    {
+        $user_id = Auth::id();
+        
+        // Ambil semua pesanan milik user ini, urutkan dari yang terbaru (latest)
+        $orders = Order::with('transactions.product')
+                        ->where('user_id', $user_id)
+                        ->latest()
+                        ->get();
+
+        return view('index_order', compact('orders'));
+    }
 }

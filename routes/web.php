@@ -43,6 +43,7 @@ Route::middleware('auth')->group(function () {
     Route::delete('/cart/{cart}', [CartController::class,'destroy_cart'])->name('destroy_cart');
     Route::post('/checkout', [OrderController::class,'checkout'])->name('checkout');
     Route::get('/order/{order}', [OrderController::class,'show_order'])->name('show_order');
+    Route::get('/orders', [OrderController::class, 'index_order'])->name('index_order')->middleware('auth');
 });
 
 require __DIR__.'/auth.php';
