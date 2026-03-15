@@ -65,4 +65,12 @@ class OrderController extends Controller
             return redirect()->back()->withErrors('Terjadi kesalahan sistem: ' . $e->getMessage());
         }
     }
+
+    public function show_order(Order $order){
+        if($order->user_id != Auth::user()->id){
+            return redirect()->route('show_product', $order->id)->with('error','Anda tidak memiliki akses ke pesanan ini.');
+        }
+        $order->load('transactions.product');
+        return view('show_order', compact('order'));
+    }
 }
