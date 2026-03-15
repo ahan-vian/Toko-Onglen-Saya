@@ -13,20 +13,27 @@ use function PHPUnit\Framework\returnArgument;
 
 class OrderController extends Controller
 {
-    public function checkout()
+    public function checkout(Request $request)
     {
+        $request->validate([
+            'cart_ids' => 'required|array',
+        ], [
+            'cart_ids.required' => 'Silakan pilih minimal satu barang untuk di-checkout.'
+        ]);
         $user_id = Auth::id();
-        $carts = Cart::where("user_id", $user_id)->get();
+        $carts = Cart::whereIn('id', $request->cart_ids)
+            ->where('user_id', $user_id)
+            ->get();
 
         if ($carts->isEmpty()) {
-            return redirect()->back()->with("error", "Keranjang anda masih kosong!");
+            return redirect()->back()->withErrors('Barang yang dipilih tidak valid.');
         }
-
         DB::beginTransaction();
         try {
+
             $order = Order::create([
-                "user_id" => $user_id,
-                "is_paid" => false,
+                'user_id' => $user_id,
+                'is_paid' => false,
             ]);
 
             foreach ($carts as $cart) {
@@ -34,23 +41,28 @@ class OrderController extends Controller
 
                 if ($product->stock < $cart->amount) {
                     DB::rollBack();
-                    return redirect()->back()->with("error", "Maaf Stock product" . $product->name . "Tidak mencukupi. Sisa stok" . $product->stock);
+                    return redirect()->back()->withErrors('Stok produk ' . $product->name . ' tidak mencukupi.');
                 }
+
                 Transaction::create([
                     'order_id' => $order->id,
                     'product_id' => $cart->product_id,
-                    'amount' => $cart->amount
+                    'amount' => $cart->amount,
                 ]);
+
                 $product->update([
                     'stock' => $product->stock - $cart->amount
                 ]);
+                $cart->delete();
             }
-            Cart::where('user_id', $user_id)->delete();
+
             DB::commit();
-            return redirect()->route('show_order')->with('success', 'Checkout berhasil! Silakan upload bukti pembayaran.');
+
+            return redirect()->route('show_order', $order->id)->with('success', 'Checkout berhasil!');
+
         } catch (\Exception $e) {
             DB::rollBack();
-            return redirect()->back()->with('error', $e->getMessage());
+            return redirect()->back()->withErrors('Terjadi kesalahan sistem: ' . $e->getMessage());
         }
     }
 }

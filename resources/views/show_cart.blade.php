@@ -19,96 +19,91 @@
                     @if($carts->isEmpty())
                         <div class="text-center py-8">
                             <p class="text-gray-500 mb-4">Keranjang belanja Anda masih kosong.</p>
-                            <a href="{{ route('show_product') }}" class="bg-blue-600 text-white px-6 py-2 rounded-md hover:bg-blue-700">
+                            <a href="{{ route('show_product') }}" class="bg-blue-600 text-white px-6 py-2 rounded-md hover:bg-blue-700 transition-colors">
                                 Mulai Belanja
                             </a>
                         </div>
                     @else
-                        <table class="w-full text-left border-collapse">
-                            <thead>
-                                <tr class="bg-gray-100">
-                                    <th class="border-b py-3 px-4 font-semibold text-sm">Produk</th>
-                                    <th class="border-b py-3 px-4 font-semibold text-sm">Harga Satuan</th>
-                                    <th class="border-b py-3 px-4 font-semibold text-sm text-center">Jumlah</th>
-                                    <th class="border-b py-3 px-4 font-semibold text-sm text-right">Subtotal</th>
-                                    <th class="border-b py-3 px-4 font-semibold text-sm text-center">Aksi</th>
-                                    <th class="border-b py-3 px-4 font-semibold text-sm">Pilih</th>
-                                </tr>
-                            </thead>
-                            <tbody>
-                                @php $totalHarga = 0; 
-                                @endphp 
-                                @foreach ($carts as $cart)
-    
-                                @if ($cart->product) 
-                                    
-                                    @php 
-                                        $subtotal = $cart->product->price * $cart->amount; 
-                                        $totalHarga += $subtotal; 
-                                    @endphp
-                                    <tr class="hover:bg-gray-50">
-                                        <td class="border-b py-4 px-4 flex items-center gap-4">
-                                            <img src="{{ asset('storage/' . $cart->product->image) }}" alt="Gambar" class="w-16 h-16 object-cover rounded-md shadow-sm">
-                                            <span class="font-medium">{{ $cart->product->name }}</span>
-                                        </td>
-                                        
-                                        <td class="border-b py-4 px-4 text-gray-600">
-                                            Rp {{ number_format($cart->product->price, 0, ',', '.') }}
-                                        </td>
-                                        
-                                        <td class="border-b py-4 px-4 text-center">
-                                            <form action="{{ route('update_cart', $cart->id) }}" method="POST" class="flex items-center justify-center gap-2">
-                                                @csrf
-                                                @method('PATCH')
-                                                
-                                                <input type="number" name="amount" value="{{ $cart->amount }}" min="1" max="{{ $cart->product->stock }}" 
-                                                    class="w-16 text-center border-gray-300 rounded-md shadow-sm focus:ring-blue-500 focus:border-blue-500 text-sm py-1">
-                                                
-                                                <button type="submit" class="bg-blue-500 hover:bg-blue-600 text-white text-xs font-bold py-1.5 px-3 rounded shadow-sm transition-colors">
-                                                    Update
-                                                </button>
-                                            </form>
-                                        </td>
-                                        
-                                        <td class="border-b py-4 px-4 text-right font-bold text-blue-600">
-                                            Rp {{ number_format($subtotal, 0, ',', '.') }}
-                                        </td>
-
-                                        <td class="border-b py-4 px-4 text-center">
-                                            <form action="{{ route('destroy_cart', $cart->id) }}" method="POST" 
-                                                onsubmit="return confirm('Apakah Anda yakin ingin menghapus barang ini dari keranjang?');">
-                                                @csrf
-                                                @method('DELETE')
-                                                <button type="submit" class="text-red-500 hover:text-red-700 font-bold text-sm">Hapus</button>
-                                            </form>
-                                            
-                                        </td>
-                                        <td class="border-b py-4 px-4 text-center">
-                                            <input type="checkbox" name="cart_ids[]" value="{{ $cart->id }}" form="form-checkout" 
-                                                class="w-5 h-5 text-blue-600 border-gray-300 rounded focus:ring-blue-500 cursor-pointer">
-                                        </td>
+                        <div class="overflow-x-auto">
+                            <table class="w-full text-left border-collapse min-w-max">
+                                <thead>
+                                    <tr class="bg-gray-100">
+                                        <th class="border-b py-3 px-4 font-semibold text-sm">Produk</th>
+                                        <th class="border-b py-3 px-4 font-semibold text-sm">Harga Satuan</th>
+                                        <th class="border-b py-3 px-4 font-semibold text-sm text-center">Jumlah</th>
+                                        <th class="border-b py-3 px-4 font-semibold text-sm text-right">Subtotal</th>
+                                        <th class="border-b py-3 px-4 font-semibold text-sm text-center">Aksi</th>
+                                        <th class="border-b py-3 px-4 font-semibold text-sm text-center">Pilih</th>
                                     </tr>
+                                </thead>
+                                <tbody>
+                                    @php $totalHarga = 0; @endphp 
+                                    
+                                    @foreach ($carts as $cart)
+                                        @if ($cart->product) 
+                                            @php 
+                                                $subtotal = $cart->product->price * $cart->amount; 
+                                                $totalHarga += $subtotal; 
+                                            @endphp
+                                            <tr class="hover:bg-gray-50">
+                                                <td class="border-b py-4 px-4 flex items-center gap-4">
+                                                    <img src="{{ asset('storage/' . $cart->product->image) }}" alt="Gambar" class="w-16 h-16 object-cover rounded-md shadow-sm">
+                                                    <span class="font-medium">{{ $cart->product->name }}</span>
+                                                </td>
+                                                
+                                                <td class="border-b py-4 px-4 text-gray-600">
+                                                    Rp {{ number_format($cart->product->price, 0, ',', '.') }}
+                                                </td>
+                                                
+                                                <td class="border-b py-4 px-4 text-center">
+                                                    <form action="{{ route('update_cart', $cart->id) }}" method="POST" class="flex items-center justify-center gap-2">
+                                                        @csrf
+                                                        @method('PATCH')
+                                                        <input type="number" name="amount" value="{{ $cart->amount }}" min="1" max="{{ $cart->product->stock }}" 
+                                                            class="w-16 text-center border-gray-300 rounded-md shadow-sm focus:ring-blue-500 focus:border-blue-500 text-sm py-1">
+                                                        <button type="submit" class="bg-blue-500 hover:bg-blue-600 text-white text-xs font-bold py-1.5 px-3 rounded shadow-sm transition-colors">
+                                                            Update
+                                                        </button>
+                                                    </form>
+                                                </td>
+                                                
+                                                <td class="border-b py-4 px-4 text-right font-bold text-blue-600">
+                                                    Rp {{ number_format($subtotal, 0, ',', '.') }}
+                                                </td>
 
-                                @endif 
-                                @endforeach
-                            </tbody>
-                        </table>
+                                                <td class="border-b py-4 px-4 text-center">
+                                                    <form action="{{ route('destroy_cart', $cart->id) }}" method="POST" 
+                                                        onsubmit="return confirm('Apakah Anda yakin ingin menghapus barang ini dari keranjang?');">
+                                                        @csrf
+                                                        @method('DELETE')
+                                                        <button type="submit" class="text-red-500 hover:text-red-700 font-bold text-sm">Hapus</button>
+                                                    </form>
+                                                </td>
+                                                
+                                                <td class="border-b py-4 px-4 text-center">
+                                                    <input type="checkbox" name="cart_ids[]" value="{{ $cart->id }}" form="form-checkout" 
+                                                        class="cart-checkbox w-5 h-5 text-blue-600 border-gray-300 rounded focus:ring-blue-500 cursor-pointer"
+                                                        data-subtotal="{{ $subtotal }}"> 
+                                                </td>
+                                            </tr>
+                                        @endif 
+                                    @endforeach
+                                </tbody>
+                            </table>
+                        </div>
 
                         <div class="mt-8 flex flex-col items-end border-t pt-6">
                             <div class="flex items-center gap-4 mb-4">
                                 <span class="text-lg text-gray-600">Total Tagihan:</span>
-                                <span class="text-2xl font-bold text-gray-900">Rp {{ number_format($totalHarga, 0, ',', '.') }}</span>
+                                <span class="text-2xl font-bold text-gray-900" id="grand-total">Rp 0</span>
                             </div>
-                            <form id="form-checkout" action="{{ route('checkout') }}" method="POST">
-                                @csrf
-                            </form>
 
-                            <form action="{{ route('checkout') }}" method="POST">
+                            <form id="form-checkout" action="{{ route('checkout') }}" method="POST" class="w-full sm:w-auto">
                                 @csrf
-                                <button type="submit" form="form-checkout" class="bg-green-600 hover:bg-green-700 text-white font-bold py-3 px-8 rounded-lg shadow-md transition-colors text-lg cursor-pointer w-full text-center mt-4">
+                                <button type="submit" class="w-full sm:w-auto bg-green-600 hover:bg-green-700 text-white font-bold py-3 px-8 rounded-lg shadow-md transition-colors text-lg cursor-pointer text-center">
                                     Lanjutkan ke Pembayaran (Checkout)
                                 </button>
-                            </form>
+                            </form> 
                         </div>
                     @endif
 
@@ -116,4 +111,33 @@
             </div>
         </div>
     </div>
+
+    <script>
+        document.addEventListener('DOMContentLoaded', function() {
+            const checkboxes = document.querySelectorAll('.cart-checkbox');
+            const grandTotalElement = document.getElementById('grand-total');
+
+            function hitungTotal() {
+                let total = 0;
+                
+                checkboxes.forEach(function(checkbox) {
+                    // Jika kotak diceklis, tambahkan harga subtotalnya
+                    if (checkbox.checked) {
+                        total += parseFloat(checkbox.dataset.subtotal);
+                    }
+                });
+
+                // Format ke Rupiah
+                grandTotalElement.innerText = 'Rp ' + total.toLocaleString('id-ID');
+            }
+
+            // Dengarkan setiap klik pada checkbox
+            checkboxes.forEach(function(checkbox) {
+                checkbox.addEventListener('change', hitungTotal);
+            });
+
+            // Hitung saat halaman pertama kali dimuat
+            hitungTotal();
+        });
+    </script>
 </x-app-layout>
