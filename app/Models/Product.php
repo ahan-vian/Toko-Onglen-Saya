@@ -20,7 +20,7 @@ class Product extends Model
         return $this->hasMany(Product::class);
     }
 
-    public function orders(){
-        return $this->belongsToMany(Order::class);
+    public function transactions(){
+        return $this->belongsTo(Transaction::class);
     }
 }

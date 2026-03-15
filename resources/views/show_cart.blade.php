@@ -32,6 +32,7 @@
                                     <th class="border-b py-3 px-4 font-semibold text-sm text-center">Jumlah</th>
                                     <th class="border-b py-3 px-4 font-semibold text-sm text-right">Subtotal</th>
                                     <th class="border-b py-3 px-4 font-semibold text-sm text-center">Aksi</th>
+                                    <th class="border-b py-3 px-4 font-semibold text-sm">Pilih</th>
                                 </tr>
                             </thead>
                             <tbody>
@@ -45,7 +46,6 @@
                                         $subtotal = $cart->product->price * $cart->amount; 
                                         $totalHarga += $subtotal; 
                                     @endphp
-
                                     <tr class="hover:bg-gray-50">
                                         <td class="border-b py-4 px-4 flex items-center gap-4">
                                             <img src="{{ asset('storage/' . $cart->product->image) }}" alt="Gambar" class="w-16 h-16 object-cover rounded-md shadow-sm">
@@ -83,6 +83,10 @@
                                             </form>
                                             
                                         </td>
+                                        <td class="border-b py-4 px-4 text-center">
+                                            <input type="checkbox" name="cart_ids[]" value="{{ $cart->id }}" form="form-checkout" 
+                                                class="w-5 h-5 text-blue-600 border-gray-300 rounded focus:ring-blue-500 cursor-pointer">
+                                        </td>
                                     </tr>
 
                                 @endif 
@@ -95,10 +99,16 @@
                                 <span class="text-lg text-gray-600">Total Tagihan:</span>
                                 <span class="text-2xl font-bold text-gray-900">Rp {{ number_format($totalHarga, 0, ',', '.') }}</span>
                             </div>
-                            
-                            <button class="bg-green-600 hover:bg-green-700 text-white font-bold py-3 px-8 rounded-lg shadow-md transition-colors text-lg">
-                                Lanjutkan ke Pembayaran (Checkout)
-                            </button>
+                            <form id="form-checkout" action="{{ route('checkout') }}" method="POST">
+                                @csrf
+                            </form>
+
+                            <form action="{{ route('checkout') }}" method="POST">
+                                @csrf
+                                <button type="submit" form="form-checkout" class="bg-green-600 hover:bg-green-700 text-white font-bold py-3 px-8 rounded-lg shadow-md transition-colors text-lg cursor-pointer w-full text-center mt-4">
+                                    Lanjutkan ke Pembayaran (Checkout)
+                                </button>
+                            </form>
                         </div>
                     @endif
 

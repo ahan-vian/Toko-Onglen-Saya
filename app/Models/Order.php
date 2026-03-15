@@ -9,6 +9,8 @@ class Order extends Model
 {
     use HasFactory;
     protected $fillable =[
+        "user_id",
+        "product_id",
         "is_paid",
         "payment_recept"
     ];
@@ -16,7 +18,7 @@ class Order extends Model
         return $this->belongsTo(User::class);
     }
 
-    public function products(){
-        return $this->belongsToMany(Product::class);
+    public function transactions(){
+        return $this->belongsTo(Transaction::class);
     }
 }
