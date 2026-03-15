@@ -26,7 +26,7 @@
                                 <span class="bg-green-100 text-green-800 text-sm font-medium px-4 py-2 rounded-full border border-green-300">
                                     ✅ Lunas (Terkonfirmasi)
                                 </span>
-                            @elseif ($order->payment_receipt)
+                            @elseif ($order->payment_recept)
                                 <span class="bg-yellow-100 text-yellow-800 text-sm font-medium px-4 py-2 rounded-full border border-yellow-300">
                                     ⏳ Menunggu Konfirmasi Admin
                                 </span>
@@ -82,7 +82,7 @@
                         </div>
                     </div>
 
-                    @if (!$order->is_paid && !$order->payment_receipt)
+                    @if (!$order->is_paid && !$order->payment_recept)
                         <div class="bg-blue-50 border border-blue-200 rounded-lg p-6">
                             <h4 class="text-lg font-bold text-blue-900 mb-2">Instruksi Pembayaran</h4>
                             <p class="text-sm text-blue-800 mb-4">Silakan transfer sebesar <strong>Rp {{ number_format($grandTotal, 0, ',', '.') }}</strong> ke rekening berikut, lalu upload bukti transfer Anda di bawah ini.</p>
@@ -91,10 +91,9 @@
                                 <li>BCA: 1234567890 a.n Toko Keren</li>
                                 <li>Mandiri: 0987654321 a.n Toko Keren</li>
                             </ul>
-
-                            <form action="#" method="POST" enctype="multipart/form-data" class="flex flex-col sm:flex-row gap-4 items-center">
+                            <form action="{{ route('submit_payment', $order->id) }}" method="POST" enctype="multipart/form-data" class="flex flex-col sm:flex-row gap-4 items-center">
                                 @csrf
-                                <input type="file" name="payment_receipt" required accept="image/*"
+                                <input type="file" name="payment_recept" required accept="image/*"
                                     class="block w-full text-sm text-gray-500 file:mr-4 file:py-2 file:px-4 file:rounded-md file:border-0 file:text-sm file:font-semibold file:bg-blue-600 file:text-white hover:file:bg-blue-700 cursor-pointer">
                                 <button type="submit" class="w-full sm:w-auto bg-green-600 hover:bg-green-700 text-white font-bold py-2 px-6 rounded-md shadow transition-colors text-sm">
                                     Upload Bukti
@@ -103,10 +102,10 @@
                         </div>
                     @endif
 
-                    @if ($order->payment_receipt)
+                    @if ($order->payment_recept)
                         <div class="mt-6 border-t pt-6">
                             <h4 class="text-md font-bold text-gray-700 mb-4">Bukti Pembayaran Anda:</h4>
-                            <img src="{{ asset('storage/' . $order->payment_receipt) }}" alt="Bukti Transfer" class="max-w-xs rounded-lg shadow-md border">
+                            <img src="{{ asset('storage/' . $order->payment_recept) }}" alt="Bukti Transfer" class="max-w-xs rounded-lg shadow-md border">
                         </div>
                     @endif
 

@@ -10,6 +10,7 @@ use App\Models\Cart;
 use App\Models\Order;
 use App\Models\Product;
 use function PHPUnit\Framework\returnArgument;
+use Illuminate\Support\Facades\Storage;
 
 class OrderController extends Controller
 {
@@ -85,5 +86,24 @@ class OrderController extends Controller
                         ->get();
 
         return view('index_order', compact('orders'));
+    }
+
+    public function submit_payment(Request $request, Order $order){
+        
+        if($order->user_id != Auth::user()->id){
+            return redirect()->back()->with('error','Anda tidak memilki akses!');
+        }
+        $request->validate([
+            'payment_recept'=> 'required|image|mimes:jpeg,png,jpg|max:2048',
+        ]);
+        if($request->hasFile('payment_recept')){
+            $file = $request->file('payment_recept');
+            $path = $file->store('receipts', 'public');
+            $order->update([
+                'payment_recept'=>$path,
+            ]);
+            return redirect()->back()->with('success','Bukti Pembayaran Berhasil di unggah');
+        }
+        return redirect()->back()->with('error','Gagal menggunggah bukti pembayaran');
     }
 }

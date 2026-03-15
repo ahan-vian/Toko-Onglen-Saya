@@ -44,6 +44,7 @@ Route::middleware('auth')->group(function () {
     Route::post('/checkout', [OrderController::class,'checkout'])->name('checkout');
     Route::get('/order/{order}', [OrderController::class,'show_order'])->name('show_order');
     Route::get('/orders', [OrderController::class, 'index_order'])->name('index_order')->middleware('auth');
+    Route::post('/order/{order}/pay', [OrderController::class,'submit_payment'])->name('submit_payment');
 });
 
 require __DIR__.'/auth.php';
