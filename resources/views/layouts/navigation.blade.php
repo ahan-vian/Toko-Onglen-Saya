@@ -24,6 +24,9 @@
                         <x-nav-link :href="route('index_admin_order')" :active="request()->routeIs('index_admin_order')">
                             {{ __('Pesanan Masuk') }}
                         </x-nav-link>
+                        <x-nav-link :href="route('confirmed_orders')" :active="request()->routeIs('confirmed_orders')">
+                            {{ __('Pesanan Terbayar') }}
+                        </x-nav-link>
 
                     @else
                         <x-nav-link :href="route('show_cart')" :active="request()->routeIs('show_cart')">

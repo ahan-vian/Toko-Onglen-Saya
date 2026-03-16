@@ -109,4 +109,14 @@ class OrderController extends Controller
 
         return view('index_admin_payment', compact('orders'));
     }
+
+    public function confirmed_orders()
+{
+    // Mengambil pesanan yang sudah dibayar (is_paid = true)
+    $orders = Order::with('user')
+                    ->where('is_paid', true)
+                    ->latest()
+                    ->get();
+    return view('admin_confirmed_orders', compact('orders'));
+}
 }

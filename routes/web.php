@@ -39,6 +39,7 @@ Route::middleware(['auth', 'admin'])->group(function () {
     // Manajemen Pesanan Admin
     Route::get('/admin/orders', [OrderController::class, 'index_admin'])->name('index_admin_order');
     Route::post('/order/{order}/confirm', [OrderController::class, 'confirm_payment'])->name('confirm_payment');
+    Route::get('/admin/orders/confirmed', [OrderController::class, 'confirmed_orders'])->name('confirmed_orders');
 });
 
 
