@@ -36,9 +36,20 @@ class ProductController extends Controller
         return redirect()->route('create_product')->with('success', 'berhasil menambahkan product');
     }
 
-    public function show_product()
+    public function show_product(Request $request)
     {
-        $product = Product::all();
+        $query = Product::query();
+
+        // 2. Tangkap kata kunci dari URL (jika ada)
+        if ($request->has('search') && $request->search != '') {
+            // Saring produk yang namanya mengandung kata kunci tersebut
+            $query->where('name', 'like', '%' . $request->search . '%');
+        }
+
+        // 3. Ambil datanya (menggunakan variabel $product sesuai file Blade Anda)
+        $product = $query->latest()->get();
+
+        // 4. Kirim ke tampilan
         return view('show_product', compact('product'));
     }
 
