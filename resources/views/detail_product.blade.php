@@ -37,20 +37,22 @@
                                 class="inline-block bg-gray-200 hover:bg-gray-300 text-gray-800 font-bold py-2 px-6 rounded transition-colors">
                                 &larr; Kembali ke Katalog
                             </a>
-                            <a href="{{ route('edit_product', $product->id) }}"
-                                class="inline-block bg-yellow-500 hover:bg-yellow-600 text-white font-bold py-2 px-6 rounded transition-colors ml-4">
-                                &#9998; Edit Produk
-                            </a>
-                            <form action="{{ route('destroy_product', $product->id) }}" method="POST"
-                                class="inline-block"
-                                onsubmit="return confirm('Apakah Anda yakin ingin menghapus produk ini? Tindakan ini tidak dapat dibatalkan.');">
+                            @if(Auth::check() && Auth::user()->is_admin)
+                                <a href="{{ route('edit_product', $product->id) }}"
+                                    class="inline-block bg-yellow-500 hover:bg-yellow-600 text-white font-bold py-2 px-6 rounded transition-colors ml-4">
+                                    &#9998; Edit Produk
+                                </a>
+                                <form action="{{ route('destroy_product', $product->id) }}" method="POST"
+                                    class="inline-block"
+                                    onsubmit="return confirm('Apakah Anda yakin ingin menghapus produk ini? Tindakan ini tidak dapat dibatalkan.');">
 
-                                @csrf
-                                @method('DELETE') <button type="submit"
-                                    class="bg-red-600 hover:bg-red-700 text-white font-bold py-2 px-6 rounded transition-colors ml-2 shadow-sm">
-                                    Hapus Produk
-                                </button>
-                            </form>
+                                    @csrf
+                                    @method('DELETE') <button type="submit"
+                                        class="bg-red-600 hover:bg-red-700 text-white font-bold py-2 px-6 rounded transition-colors ml-2 shadow-sm">
+                                        Hapus Produk
+                                    </button>
+                                </form>
+                            @endif
                         </div>
                     </div>
 

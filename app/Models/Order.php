@@ -14,7 +14,7 @@ class Order extends Model
         "is_paid",
         "payment_recept"
     ];
-    public function users(){
+    public function user(){
         return $this->belongsTo(User::class);
     }
 

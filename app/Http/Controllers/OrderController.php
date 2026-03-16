@@ -101,7 +101,7 @@ class OrderController extends Controller
     public function index_admin()
     {
         // Mengambil pesanan yang SUDAH upload struk tapi BELUM lunas
-        $orders = Order::with(['users', 'transactions.product'])
+        $orders = Order::with(['user', 'transactions.product'])
                         ->whereNotNull('payment_recept')
                         ->where('is_paid', false)
                         ->latest()

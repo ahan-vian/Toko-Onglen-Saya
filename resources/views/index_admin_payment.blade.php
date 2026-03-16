@@ -18,7 +18,7 @@
 
                     @if($orders->isEmpty())
                         <div class="text-center py-8">
-                            <p class="text-gray-500 mb-4 text-lg">Hore! Saat ini tidak ada pesanan yang butuh konfirmasi.
+                            <p class="text-gray-500 mb-4 text-lg">Saat ini tidak ada pesanan yang butuh konfirmasi.
                             </p>
                         </div>
                     @else
@@ -57,6 +57,13 @@
                                                     class="font-semibold">{{ $order->user->name ?? 'User Dihapus' }}</span><br>
                                                 <span
                                                     class="text-xs text-gray-500">{{ $order->created_at->format('d M Y, H:i') }}</span>
+
+                                                <div class="mt-2 text-sm bg-indigo-50 p-2 rounded border border-indigo-100">
+                                                    <p class="mb-1"><span class="font-bold text-indigo-900">📞 HP:</span>
+                                                        {{ $order->user->phone ?? 'Belum diisi' }}</p>
+                                                    <p><span class="font-bold text-indigo-900">🏠 Alamat:</span>
+                                                        {{ $order->user->address ?? 'Belum diisi' }}</p>
+                                                </div>
                                             </td>
                                             <td class="border-b py-4 px-4 font-bold text-blue-600">
                                                 Rp {{ number_format($totalHarga, 0, ',', '.') }}

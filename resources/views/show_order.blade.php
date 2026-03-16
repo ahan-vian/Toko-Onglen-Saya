@@ -4,7 +4,35 @@
             Detail Pesanan #{{ $order->id }}
         </h2>
     </x-slot>
-
+    <div class="mt-6 mb-6 bg-white p-6 rounded-lg shadow-sm border border-gray-200">
+    <h4 class="text-lg font-bold text-gray-800 mb-4 border-b pb-2">📦 Informasi Pengiriman</h4>
+    <div class="grid grid-cols-1 md:grid-cols-2 gap-4 text-sm">
+        
+        <div>
+            <p class="text-gray-500 font-semibold">Nama Penerima:</p>
+            <p class="text-gray-800 font-medium">{{ $order->user?->name ?? 'User Tidak Ditemukan / Dihapus' }}</p>
+        </div>
+        
+        <div>
+            <p class="text-gray-500 font-semibold">Nomor Handphone:</p>
+            @if($order->user?->phone)
+                <p class="text-gray-800 font-medium">{{ $order->user->phone }}</p>
+            @else
+                <p class="text-red-600 italic">Belum diisi. <a href="{{ route('profile.edit') }}" class="underline hover:text-red-800">Lengkapi di Profil</a></p>
+            @endif
+        </div>
+        
+        <div class="md:col-span-2">
+            <p class="text-gray-500 font-semibold">Alamat Lengkap:</p>
+            @if($order->user?->address)
+                <p class="text-gray-800 font-medium">{{ $order->user->address }}</p>
+            @else
+                <p class="text-red-600 italic">Belum diisi. <a href="{{ route('profile.edit') }}" class="underline hover:text-red-800">Lengkapi di Profil</a></p>
+            @endif
+        </div>
+        
+    </div>
+</div>
     <div class="py-12">
         <div class="max-w-5xl mx-auto sm:px-6 lg:px-8">
             <div class="bg-white overflow-hidden shadow-sm sm:rounded-lg">
