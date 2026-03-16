@@ -71,6 +71,7 @@ Route::middleware('auth')->group(function () {
     Route::get('/order/{order}', [OrderController::class, 'show_order'])->name('show_order');
     Route::post('/order/{order}/pay', [OrderController::class, 'submit_payment'])->name('submit_payment');
     Route::post('/order/{order}/complete', [OrderController::class, 'complete_order'])->name('complete_order');
+    Route::get('/order/{order}/invoice', [OrderController::class, 'print_invoice'])->name('print_invoice');
 });
 
 // Rute Detail Produk (Diletakkan di bawah agar rute /product/create milik admin tidak terbaca sebagai {product})

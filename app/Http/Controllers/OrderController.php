@@ -11,6 +11,7 @@ use App\Models\Order;
 use App\Models\Product;
 use function PHPUnit\Framework\returnArgument;
 use Illuminate\Support\Facades\Storage;
+use Barryvdh\DomPDF\Facade\Pdf;
 
 class OrderController extends Controller
 {
@@ -139,16 +140,32 @@ class OrderController extends Controller
     }
 
     public function complete_order(Order $order)
-{
-    
-    if (Auth::id() !== $order->user_id) {
-        abort(403);
+    {
+
+        if (Auth::id() !== $order->user_id) {
+            abort(403);
+        }
+
+        $order->update([
+            'is_paid' => true,
+        ]);
+
+        return redirect()->back()->with('success', 'Terima kasih! Pesanan telah selesai.');
     }
+    public function print_invoice(Order $order)
+    {
+        // Pastikan hanya admin atau pemilik pesanan yang bisa cetak
+        if ($order->user_id != Auth::id() && !Auth::user()->is_admin) {
+            abort(403, 'Anda tidak memiliki akses.');
+        }
 
-    $order->update([
-        'is_paid' => true, 
-    ]);
+        // Load relasi produk
+        $order->load('transactions.product', 'user');
 
-    return redirect()->back()->with('success', 'Terima kasih! Pesanan telah selesai.');
-}
+        // Buat PDF dari tampilan 'invoice.blade.php'
+        $pdf = Pdf::loadView('invoice', compact('order'));
+
+        // Download file PDF-nya dengan nama yang rapi
+        return $pdf->stream('Invoice-Pesanan-' . $order->id . '.pdf');
+    }
 }
