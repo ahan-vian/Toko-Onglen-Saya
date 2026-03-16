@@ -57,66 +57,98 @@ class OrderController extends Controller
             return redirect()->back()->withErrors('Terjadi kesalahan sistem: ' . $e->getMessage());
         }
     }
-    public function show_order(Order $order){
-        if($order->user_id != Auth::user()->id){
-            return redirect()->route('show_product', $order->id)->with('error','Anda tidak memiliki akses ke pesanan ini.');
+    public function show_order(Order $order)
+    {
+        if ($order->user_id != Auth::id() && !Auth::user()->is_admin) {
+            return redirect()->route('show_product')->with('error', 'Anda tidak memiliki akses ke pesanan ini.');
         }
         $order->load('transactions.product');
+
         return view('show_order', compact('order'));
     }
     public function index_order()
     {
         $user_id = Auth::id();
         $orders = Order::with('transactions.product')
-                        ->where('user_id', $user_id)
-                        ->latest()
-                        ->get();
+            ->where('user_id', $user_id)
+            ->latest()
+            ->get();
         return view('index_order', compact('orders'));
     }
-    public function submit_payment(Request $request, Order $order){
-        if($order->user_id != Auth::user()->id){
-            return redirect()->back()->with('error','Anda tidak memilki akses!');
+    public function submit_payment(Request $request, Order $order)
+    {
+        if ($order->user_id != Auth::user()->id) {
+            return redirect()->back()->with('error', 'Anda tidak memilki akses!');
         }
         $request->validate([
-            'payment_recept'=> 'required|image|mimes:jpeg,png,jpg|max:2048',
+            'payment_recept' => 'required|image|mimes:jpeg,png,jpg|max:2048',
         ]);
-        if($request->hasFile('payment_recept')){
+        if ($request->hasFile('payment_recept')) {
             $file = $request->file('payment_recept');
             $path = $file->store('receipts', 'public');
             $order->update([
-                'payment_recept'=>$path,
+                'payment_recept' => $path,
             ]);
-            return redirect()->back()->with('success','Bukti Pembayaran Berhasil di unggah');
+            return redirect()->back()->with('success', 'Bukti Pembayaran Berhasil di unggah');
         }
-        return redirect()->back()->with('error','Gagal menggunggah bukti pembayaran');
+        return redirect()->back()->with('error', 'Gagal menggunggah bukti pembayaran');
     }
 
-    public function confirm_payment(Request $request, Order $order){
+    public function confirm_payment(Request $request, Order $order)
+    {
         $order->update([
-            'is_paid'=>True
+            'is_paid' => True
         ]);
-        
-        return redirect()->back()->with('success','Pembayaran berhasil di Konfirmasi!');
+
+        return redirect()->back()->with('success', 'Pembayaran berhasil di Konfirmasi!');
     }
     public function index_admin()
     {
         // Mengambil pesanan yang SUDAH upload struk tapi BELUM lunas
         $orders = Order::with(['user', 'transactions.product'])
-                        ->whereNotNull('payment_recept')
-                        ->where('is_paid', false)
-                        ->latest()
-                        ->get();
+            ->whereNotNull('payment_recept')
+            ->where('is_paid', false)
+            ->latest()
+            ->get();
 
         return view('index_admin_payment', compact('orders'));
     }
 
     public function confirmed_orders()
+    {
+        // Mengambil pesanan yang sudah dibayar (is_paid = true)
+        $orders = Order::with('user')
+            ->where('is_paid', true)
+            ->latest()
+            ->get();
+        return view('admin_confirmed_orders', compact('orders'));
+    }
+    public function submit_receipt(Order $order, Request $request)
+    {
+        // Validasi input
+        $request->validate([
+            'receipt_number' => 'required|string|max:255',
+        ]);
+
+        // Update data resi di database
+        $order->update([
+            'receipt_number' => $request->receipt_number
+        ]);
+
+        return redirect()->back()->with('success', 'Nomor resi berhasil diupdate!');
+    }
+
+    public function complete_order(Order $order)
 {
-    // Mengambil pesanan yang sudah dibayar (is_paid = true)
-    $orders = Order::with('user')
-                    ->where('is_paid', true)
-                    ->latest()
-                    ->get();
-    return view('admin_confirmed_orders', compact('orders'));
+    
+    if (Auth::id() !== $order->user_id) {
+        abort(403);
+    }
+
+    $order->update([
+        'is_paid' => true, 
+    ]);
+
+    return redirect()->back()->with('success', 'Terima kasih! Pesanan telah selesai.');
 }
 }

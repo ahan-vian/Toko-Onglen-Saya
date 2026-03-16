@@ -12,7 +12,8 @@ class Order extends Model
         "user_id",
         "product_id",
         "is_paid",
-        "payment_recept"
+        "payment_recept",
+        "receipt_number",
     ];
     public function user(){
         return $this->belongsTo(User::class);

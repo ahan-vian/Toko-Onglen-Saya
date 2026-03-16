@@ -40,6 +40,7 @@ Route::middleware(['auth', 'admin'])->group(function () {
     Route::get('/admin/orders', [OrderController::class, 'index_admin'])->name('index_admin_order');
     Route::post('/order/{order}/confirm', [OrderController::class, 'confirm_payment'])->name('confirm_payment');
     Route::get('/admin/orders/confirmed', [OrderController::class, 'confirmed_orders'])->name('confirmed_orders');
+    Route::post('/order/{order}/receipt', [OrderController::class, 'submit_receipt'])->name('submit_receipt');
 });
 
 
@@ -69,6 +70,7 @@ Route::middleware('auth')->group(function () {
     Route::get('/orders', [OrderController::class, 'index_order'])->name('index_order');
     Route::get('/order/{order}', [OrderController::class, 'show_order'])->name('show_order');
     Route::post('/order/{order}/pay', [OrderController::class, 'submit_payment'])->name('submit_payment');
+    Route::post('/order/{order}/complete', [OrderController::class, 'complete_order'])->name('complete_order');
 });
 
 // Rute Detail Produk (Diletakkan di bawah agar rute /product/create milik admin tidak terbaca sebagai {product})

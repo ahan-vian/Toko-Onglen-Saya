@@ -4,36 +4,34 @@
             Detail Pesanan #{{ $order->id }}
         </h2>
     </x-slot>
-    <div class="mt-6 mb-6 bg-white p-6 rounded-lg shadow-sm border border-gray-200">
-    <h4 class="text-lg font-bold text-gray-800 mb-4 border-b pb-2">📦 Informasi Pengiriman</h4>
-    <div class="grid grid-cols-1 md:grid-cols-2 gap-4 text-sm">
-        
-        <div>
-            <p class="text-gray-500 font-semibold">Nama Penerima:</p>
-            <p class="text-gray-800 font-medium">{{ $order->user?->name ?? 'User Tidak Ditemukan / Dihapus' }}</p>
+
+    <div class="max-w-5xl mx-auto mt-6 mb-6 bg-white p-6 rounded-lg shadow-sm border border-gray-200">
+        <h4 class="text-lg font-bold text-gray-800 mb-4 border-b pb-2">📦 Informasi Pengiriman</h4>
+        <div class="grid grid-cols-1 md:grid-cols-2 gap-4 text-sm">
+            <div>
+                <p class="text-gray-500 font-semibold">Nama Penerima:</p>
+                <p class="text-gray-800 font-medium">{{ $order->user?->name ?? 'User Tidak Ditemukan / Dihapus' }}</p>
+            </div>
+            <div>
+                <p class="text-gray-500 font-semibold">Nomor Handphone:</p>
+                @if($order->user?->phone)
+                    <p class="text-gray-800 font-medium">{{ $order->user->phone }}</p>
+                @else
+                    <p class="text-red-600 italic">Belum diisi. <a href="{{ route('profile.edit') }}" class="underline hover:text-red-800">Lengkapi di Profil</a></p>
+                @endif
+            </div>
+            <div class="md:col-span-2">
+                <p class="text-gray-500 font-semibold">Alamat Lengkap:</p>
+                @if($order->user?->address)
+                    <p class="text-gray-800 font-medium">{{ $order->user->address }}</p>
+                @else
+                    <p class="text-red-600 italic">Belum diisi. <a href="{{ route('profile.edit') }}" class="underline hover:text-red-800">Lengkapi di Profil</a></p>
+                @endif
+            </div>
         </div>
-        
-        <div>
-            <p class="text-gray-500 font-semibold">Nomor Handphone:</p>
-            @if($order->user?->phone)
-                <p class="text-gray-800 font-medium">{{ $order->user->phone }}</p>
-            @else
-                <p class="text-red-600 italic">Belum diisi. <a href="{{ route('profile.edit') }}" class="underline hover:text-red-800">Lengkapi di Profil</a></p>
-            @endif
-        </div>
-        
-        <div class="md:col-span-2">
-            <p class="text-gray-500 font-semibold">Alamat Lengkap:</p>
-            @if($order->user?->address)
-                <p class="text-gray-800 font-medium">{{ $order->user->address }}</p>
-            @else
-                <p class="text-red-600 italic">Belum diisi. <a href="{{ route('profile.edit') }}" class="underline hover:text-red-800">Lengkapi di Profil</a></p>
-            @endif
-        </div>
-        
     </div>
-</div>
-    <div class="py-12">
+
+    <div class="py-6">
         <div class="max-w-5xl mx-auto sm:px-6 lg:px-8">
             <div class="bg-white overflow-hidden shadow-sm sm:rounded-lg">
                 <div class="p-6 text-gray-900">
@@ -110,11 +108,50 @@
                         </div>
                     </div>
 
-                    @if (!$order->is_paid && !$order->payment_recept)
-                        <div class="bg-blue-50 border border-blue-200 rounded-lg p-6">
-                            <h4 class="text-lg font-bold text-blue-900 mb-2">Instruksi Pembayaran</h4>
-                            <p class="text-sm text-blue-800 mb-4">Silakan transfer sebesar <strong>Rp {{ number_format($grandTotal, 0, ',', '.') }}</strong> ke rekening berikut, lalu upload bukti transfer Anda di bawah ini.</p>
+                    <hr class="my-8">
+
+                    @if(Auth::user()->is_admin)
+                        <div class="mb-8 p-6 bg-blue-50 rounded-lg border border-blue-200 shadow-sm">
+                            <h3 class="text-lg font-bold text-blue-900 mb-4">Input Nomor Resi Pengiriman</h3>
+                            <form action="{{ route('submit_receipt', $order->id) }}" method="POST">
+                                @csrf
+                                <div class="flex gap-4">
+                                    <input type="text" name="receipt_number" 
+                                        value="{{ $order->receipt_number }}" 
+                                        placeholder="Contoh: JNE123456789"
+                                        class="flex-1 border-gray-300 rounded-md shadow-sm" required>
+                                    <button type="submit" class="bg-blue-600 hover:bg-blue-700 text-white font-bold py-2 px-6 rounded transition-colors">
+                                        Simpan Resi
+                                    </button>
+                                </div>
+                            </form>
+                        </div>
+                    @endif
+
+                    @if($order->receipt_number)
+                        <div class="mb-8 p-6 bg-green-50 rounded-lg border border-green-200 shadow-sm">
+                            <div class="flex items-center gap-3 mb-2">
+                                <span class="text-2xl">🚚</span>
+                                <h3 class="text-lg font-bold text-green-900">Pesanan Sedang Dikirim</h3>
+                            </div>
+                            <p class="text-green-800">Nomor Resi: <span class="font-mono font-bold">{{ $order->receipt_number }}</span></p>
                             
+                            @if(!Auth::user()->is_admin)
+                                <form action="{{ route('complete_order', $order->id) }}" method="POST" class="mt-4">
+                                    @csrf
+                                    <button type="submit" onclick="return confirm('Apakah barang sudah sampai?')" 
+                                        class="bg-green-600 hover:bg-green-700 text-white font-bold py-2 px-4 rounded transition-colors shadow-sm">
+                                        Konfirmasi Pesanan Diterima
+                                    </button>
+                                </form>
+                            @endif
+                        </div>
+                    @endif
+
+                    @if (!$order->is_paid && !$order->payment_recept)
+                        <div class="bg-blue-50 border border-blue-200 rounded-lg p-6 mb-6">
+                            <h4 class="text-lg font-bold text-blue-900 mb-2">Instruksi Pembayaran</h4>
+                            <p class="text-sm text-blue-800 mb-4">Silakan transfer sebesar <strong>Rp {{ number_format($grandTotal, 0, ',', '.') }}</strong> ke rekening berikut:</p>
                             <ul class="list-disc list-inside text-sm text-blue-800 mb-6 font-medium">
                                 <li>BCA: 1234567890 a.n Toko Keren</li>
                                 <li>Mandiri: 0987654321 a.n Toko Keren</li>
@@ -123,7 +160,7 @@
                                 @csrf
                                 <input type="file" name="payment_recept" required accept="image/*"
                                     class="block w-full text-sm text-gray-500 file:mr-4 file:py-2 file:px-4 file:rounded-md file:border-0 file:text-sm file:font-semibold file:bg-blue-600 file:text-white hover:file:bg-blue-700 cursor-pointer">
-                                <button type="submit" class="w-full sm:w-auto bg-green-600 hover:bg-green-700 text-white font-bold py-2 px-6 rounded-md shadow transition-colors text-sm">
+                                <button type="submit" class="w-full sm:w-auto bg-green-600 hover:bg-green-700 text-white font-bold py-2 px-6 rounded-md shadow transition-colors">
                                     Upload Bukti
                                 </button>
                             </form>
@@ -132,7 +169,7 @@
 
                     @if ($order->payment_recept)
                         <div class="mt-6 border-t pt-6">
-                            <h4 class="text-md font-bold text-gray-700 mb-4">Bukti Pembayaran Anda:</h4>
+                            <h4 class="text-md font-bold text-gray-700 mb-4">Bukti Pembayaran:</h4>
                             <img src="{{ asset('storage/' . $order->payment_recept) }}" alt="Bukti Transfer" class="max-w-xs rounded-lg shadow-md border">
                         </div>
                     @endif
